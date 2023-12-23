@@ -22,34 +22,13 @@ def test_product_api(client):
     assert response.status_code == 200
 
 def test_post_cart(client):
-    
-    # Buat test produk
-    product_data = {
-        'id': 1,
-        'name': 'Test Product',
-        'price': DEFAULT_PRICE
-    }
-    client.post('/api/products', data=json.dumps(product_data), content_type='application/json')
-
-    # Buat test keranjang
-    cart_data = {
-        'cart_items': [
-            {'product_id': 1, 'qty': 2},
-            # Tambahkan lebih banyak item jika diperlukan
+     data = {
+        "coupon_code": "DISCOUNT20",
+        "shipping_fee": 5.0,
+        "cart_items": [
+            {"product_id": 1, "qty": 2, "item_price": 30.0},
+            {"product_id": 2, "qty": 1, "item_price": 50.0}
         ]
-    }
-
-    # Posting test keranjang
-    response = client.post('/api/cart', data=json.dumps(cart_data), content_type='application/json')
-
-    # Periksa apakah respon berhasil (kode status 200 untuk OK)
-    assert response.status_code == 200  # Dengan asumsi kreasi yang berhasil akan menghasilkan 200
-
-    # Pembersihan: Hapus produk uji dan keranjang jika diperlukan
-    client.delete(f'/api/products/{product_data["id"]}')
-
-    # Periksa apakah respon.json tidak Ada sebelum mengakses cart_id
-    if response.json:
-        client.delete(f'/api/cart/{response.json["cart_id"]}')
-    else:
-        print("Warning: response.json is None")
+     }
+     response = client.post("/api/cart", json=data)
+     assert response.status_code == 200
